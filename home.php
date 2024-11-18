@@ -143,12 +143,33 @@
                                         <?php
 							
                                             $i=1;
-                                            $total_pending = 0;
-                                            $qry = $conn->query("(SELECT DISTINCT l.id, l.ref_no, concat(b.firstname,' ',b.lastname)as borrower, b.address, b.contact_no, l.daily_amount from borrowers b JOIN loan_list l ON b.id=l.borrower_id WHERE l.status=2
-                                            EXCEPT
-                                            SELECT DISTINCT l.id, l.ref_no, concat(b.firstname,' ',b.lastname)as borrower, b.address, b.contact_no, l.daily_amount from borrowers b JOIN loan_list l ON b.id=l.borrower_id JOIN payments p on l.id=p.loan_id WHERE l.status=2 AND date(p.date_created)=date(CURRENT_DATE))
-                                            UNION
-                                            SELECT DISTINCT l.id, l.ref_no, concat(b.firstname,' ',b.lastname)as borrower, b.address, b.contact_no, l.daily_amount from borrowers b JOIN loan_list l ON b.id=l.borrower_id JOIN payments p on l.id=p.loan_id WHERE l.status=2 AND date(p.date_created)=date(CURRENT_DATE) AND l.daily_amount>(SELECT sum(amount) from payments p2 where l.id=p2.loan_id and date(p2.date_created)=date(CURRENT_DATE))");
+                                                $total_pending = 0;
+                                                $qry = $conn->query("(SELECT DISTINCT l.id, l.unique_id, concat(b.firstname,' ',b.lastname) as borrower, 
+        b.address, b.contact_no, l.daily_amount 
+        FROM borrowers b 
+        JOIN loan_list l ON b.id=l.borrower_id 
+        WHERE l.status=2
+        EXCEPT
+        SELECT DISTINCT l.id, l.unique_id, concat(b.firstname,' ',b.lastname) as borrower, 
+        b.address, b.contact_no, l.daily_amount 
+        FROM borrowers b 
+        JOIN loan_list l ON b.id=l.borrower_id 
+        JOIN payments p on l.id=p.loan_id 
+        WHERE l.status=2 AND date(p.date_created)=date(CURRENT_DATE))
+        UNION
+        SELECT DISTINCT l.id, l.unique_id, concat(b.firstname,' ',b.lastname) as borrower, 
+        b.address, b.contact_no, l.daily_amount 
+        FROM borrowers b 
+        JOIN loan_list l ON b.id=l.borrower_id 
+        JOIN payments p on l.id=p.loan_id 
+        WHERE l.status=2 
+        AND date(p.date_created)=date(CURRENT_DATE) 
+        AND l.daily_amount>(
+            SELECT sum(amount) 
+            FROM payments p2 
+            WHERE l.id=p2.loan_id 
+            AND date(p2.date_created)=date(CURRENT_DATE)
+        )");
                                             while($row = $qry->fetch_assoc()):
                                                 $payments = $conn->query("SELECT * from payments where date(date_created)=date(CURRENT_DATE) and loan_id =".$row['id']);
                                                 $paid = $payments->num_rows;
@@ -157,8 +178,7 @@
                                                 while($p = $payments->fetch_assoc()){
                                                     $sum_paid += ($p['amount'] - $p['penalty_amount']);
                                                 }
-                                            $pending = $row['daily_amount'] - $sum_paid;
-                                            
+                                            $pending = $row['daily_amount'] - $sum_paid;                                            
                                         ?>
                                         <?php $total_pending += $pending; ?>
                                         <?php endwhile; ?>

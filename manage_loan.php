@@ -40,8 +40,8 @@ if ($id > 0) {
 
         <!-- Unique Borrower ID Display -->
         <div class="form-group">
-            <label for="unique_borrower_id" class="control-label">Borrower ID</label>
-            <input type="text" class="form-control" id="unique_borrower_id" name="unique_borrower_id" value="" readonly>
+            <label class="control-label">Unique ID</label>
+            <input type="text" class="form-control" id="unique_id" name="unique_id" value="<?php echo isset($unique_id) ? $unique_id : '' ?>" readonly>
         </div>
 
         <!-- Loan Type Selection -->
@@ -121,21 +121,13 @@ $(document).ready(function() {
     // Load Borrower Unique ID on Selection
     $('#borrower_id').change(function() {
         var borrower_id = $(this).val();
-
-        if (borrower_id) {
-            $.ajax({
-                url: 'ajax.php?action=get_borrower_id',
-                method: 'POST',
-                data: { id: borrower_id },
-                success: function(resp) {
-                    $('#unique_borrower_id').val(resp ? resp : 'No ID Found');
-                },
-                error: function() {
-                    alert('Error fetching borrower ID.');
-                }
-            });
-        } else {
-            $('#unique_borrower_id').val('');
+        if(borrower_id) {
+            var date = new Date();
+            var dateStr = date.getFullYear().toString().substr(-2) + 
+                         String(date.getMonth() + 1).padStart(2, '0') + 
+                         String(date.getDate()).padStart(2, '0');
+            var uniqueId = 'LON' + dateStr + borrower_id.padStart(4, '0') + Math.floor(Math.random() * 9000 + 1000);
+            $('#unique_id').val(uniqueId);
         }
     });
 
@@ -182,6 +174,5 @@ $(document).ready(function() {
         }
     });
 });
-
 
 </script>

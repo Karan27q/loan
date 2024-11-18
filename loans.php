@@ -107,7 +107,7 @@
                                         <p><small>Email: <b><?php echo $row['email'] ?></b></small></p>
                                     </td>
                                     <td>
-                                        <p>Reference: <b><?php echo $row['ref_no'] ?></b></p>
+                                        
                                         <p><small>Loan type: <b><?php echo $type_arr[$row['loan_type_id']] ?? 'Unknown'; ?></b></small></p>
                                         <p><small>Plan: <b><?php echo $plan_arr[$row['plan_id']]['plan'] ?? 'Unknown'; ?></b></small></p>
                                         <p><small>Amount: <b><?php echo $row['amount'] ?></b></small></p>
@@ -120,7 +120,6 @@
     <p><small>Date Completed: <b><?php echo isset($row['date_completed']) ? date("M d, Y", strtotime($row['date_completed'])) : 'N/A'; ?></b></small></p>
     <p><small>Remaining Days: <b><?php echo ($remaining_days >= 0) ? $remaining_days : 'Overdue'; ?></b></small></p>
 </td>
-
 
                                     <td class="text-center">
                                         <?php if ($row['status'] == 0) : ?>
@@ -193,7 +192,7 @@
                         alert_toast("Loan deleted successfully", 'success');
                         setTimeout(function () {
                             location.reload();
-                        },);
+                        }, 1500);
                     }
                 }
             });

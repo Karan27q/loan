@@ -17,20 +17,7 @@
  ?>
 
 </head>
-<style>
-  <?php include 'new_UI/css/index.css'; ?>
-	body{
-        /* background: #80808045; */
-  }
-  .modal-dialog.large {
-    width: 80% !important;
-    max-width: unset;
-  }
-  .modal-dialog.mid-large {
-    width: 50% !important;
-    max-width: unset;
-  }
-</style>
+  <link rel="stylesheet" href="new_UI/css/index.css">
 
 <body>
 	<?php include 'topbar.php' ?>

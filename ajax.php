@@ -164,21 +164,28 @@ function handle_save_borrower($conn) {
 }
 
 function handle_save_loan($conn) {
-    $data = "borrower_id='{$_POST['borrower_id']}',";
-    $data .= "loan_type_id='{$_POST['loan_type_id']}',";
-    $data .= "plan_id='{$_POST['plan_id']}',";
-    $data .= "amount='{$_POST['amount']}',";
-    $data .= "ref_no='{$_POST['ref_no']}'";
+    $unique_id = $_POST['unique_id'];
+    $borrower_id = $_POST['borrower_id'];
+    $loan_type_id = $_POST['loan_type_id'];
+    $plan_id = $_POST['plan_id'];
+    $amount = $_POST['amount'];
 
     if (empty($_POST['id'])) {
-        $save = $conn->query("INSERT INTO loan_list SET $data");
+        $sql = "INSERT INTO loan_list (unique_id, borrower_id, loan_type_id, plan_id, amount, status) 
+                VALUES ('$unique_id', '$borrower_id', '$loan_type_id', '$plan_id', '$amount', 0)";
     } else {
-        $save = $conn->query("UPDATE loan_list SET $data WHERE id = {$_POST['id']}");
+        $sql = "UPDATE loan_list SET 
+                unique_id = '$unique_id',
+                borrower_id = '$borrower_id',
+                loan_type_id = '$loan_type_id',
+                plan_id = '$plan_id',
+                amount = '$amount'
+                WHERE id = {$_POST['id']}";
     }
 
+    $save = $conn->query($sql);
     echo $save ? 1 : "Error: " . $conn->error;
 }
-
 function handle_get_borrower_id($conn) {
     $borrower_id = intval($_POST['id']);
     $qry = $conn->query("SELECT unique_borrower_id FROM borrowers WHERE id = $borrower_id");
@@ -236,4 +243,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'change_status') {
         echo 0;  // Invalid status
     }
 }
+
+
+
 ?>
